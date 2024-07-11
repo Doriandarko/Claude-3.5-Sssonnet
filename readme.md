@@ -8,7 +8,7 @@ Ever wondered how an AI would play Snake? Well, wonder no more! We've enlisted t
 
 ### 🧠 Features That'll Blow Your Mind
 
-- **AI-Powered Gameplay**: Watch in awe as Claude makes split-second decisions to navigate the snake through the digital wilderness.
+- **AI-Powered Gameplay**: Watch as Claude makes split-second decisions to navigate the snake through the digital wilderness.
 - **Real-Time Thought Process**: Peek into Claude's "mind" as it explains its moves. It's like having an AI sportscaster for a snake game!
 - **Sleek Dark Mode Interface**: Easy on the eyes, heavy on the style. Perfect for those late-night AI observation sessions.
 - **Responsive Design**: From desktop to mobile, Claude slithers smoothly across all devices.
