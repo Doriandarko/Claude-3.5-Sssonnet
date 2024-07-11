@@ -4,7 +4,7 @@ Welcome to the most mind-bending snake game you've ever encountered! 🎮 This i
 
 ## 🚀 What's This All About?
 
-Ever wondered how an AI would play Snake? Well, wonder no more! We've enlisted the help of Claude, our resident AI brainiac, to take on the classic game of Snake. This project is a thrilling fusion of nostalgia and cutting-edge technology, designed to showcase Claude's reasoning capabilities in real-time.
+Ever wondered how an AI would play Snake? Well, wonder no more! We've enlisted the help of Claude, to take on the classic game of Snake. This project is a thrilling fusion of nostalgia and cutting-edge technology, designed to showcase Claude's reasoning capabilities in real-time.
 
 ### 🧠 Features That'll Blow Your Mind
 
@@ -15,7 +15,7 @@ Ever wondered how an AI would play Snake? Well, wonder no more! We've enlisted t
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Python with FastAPI – Because even AIs need a robust backend!
+- **Backend**: Python with FastAPI
 - **Frontend**: HTML5, JavaScript, and the magic of Tailwind CSS
 - **AI Brain**: Powered by Anthropic's Claude API – The secret sauce of our intelligent snake
 
