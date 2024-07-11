@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game with Claude AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {"50":"#ecfdf5","100":"#d1fae5","200":"#a7f3d0","300":"#6ee7b7","400":"#34d399","500":"#10b981","600":"#059669","700":"#047857","800":"#065f46","900":"#064e3b","950":"#022c22"}                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="container mx-auto bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <main class="lg:col-span-2 p-6 flex flex-col items-center justify-center">
+                <h1 class="text-3xl font-bold mb-8">Claude 3.5 Ssssonnet 🐍</h1>
+                <div class="game-area relative">
+                    <canvas id="gameCanvas" width="400" height="400" class="border-4 border-primary-700 rounded-lg shadow-lg"></canvas>
+                    <div id="gameOverlay" class="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+                        <p class="text-6xl font-bold text-white">Game Over!</p>
+                    </div>
+                </div>
+            </main>
+            <aside class="bg-gray-700 p-6 rounded-r-xl">
+                <h2 class="text-xl mb-4">Claude's Thinking</h2>
+                <div id="claudeThinking" class="space-y-4 h-[calc(100vh-12rem)] overflow-y-auto pr-2">
+                    <!-- Thoughts will be dynamically added here -->
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        const socket = new WebSocket(`ws://${window.location.host}/ws`);
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const cellSize = 20;
+        const claudeThinking = document.getElementById('claudeThinking');
+        const gameOverlay = document.getElementById('gameOverlay');
+
+        socket.onopen = () => {
+            console.log('WebSocket connected');
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log('Received message:', data);
+            switch (data.type) {
+                case 'game_state':
+                    console.log('Received game state update:', data.state);
+                    drawGame(data.state);
+                    break;
+                case 'claude_thinking':
+                    addClaudeThought(data.thought);
+                    break;
+                case 'tool_usage':
+                    addToolUsagePill(data.direction);
+                    break;
+                case 'game_over':
+                    showGameOver();
+                    break;
+                case 'error':
+                    console.error('An error occurred:', data.message);
+                    break;
+            }
+        };
+
+        function drawGame(gameState) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid
+            ctx.strokeStyle = '#047857';
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i <= gameState.width; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * cellSize, 0);
+                ctx.lineTo(i * cellSize, canvas.height);
+                ctx.stroke();
+            }
+            for (let i = 0; i <= gameState.height; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, i * cellSize);
+                ctx.lineTo(canvas.width, i * cellSize);
+                ctx.stroke();
+            }
+
+            // Draw snake
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#059669');
+            gradient.addColorStop(1, '#10b981');
+            ctx.fillStyle = gradient;
+            for (let segment of gameState.snake) {
+                ctx.beginPath();
+                ctx.roundRect(segment[0] * cellSize, segment[1] * cellSize, cellSize - 1, cellSize - 1, 5);
+                ctx.fill();
+            }
+
+            // Draw food
+            ctx.fillStyle = '#f43f5e';
+            ctx.beginPath();
+            ctx.arc(gameState.food[0] * cellSize + cellSize / 2, gameState.food[1] * cellSize + cellSize / 2, cellSize / 2 - 2, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Add glow to food
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#f43f5e';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+
+        function addClaudeThought(thought) {
+            const thoughtElement = document.createElement('div');
+            thoughtElement.className = 'bg-gray-800 rounded-lg p-4 shadow transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-102';
+            thoughtElement.textContent = thought;
+            claudeThinking.appendChild(thoughtElement);
+            claudeThinking.scrollTop = claudeThinking.scrollHeight;
+        }
+
+        function addToolUsagePill(direction) {
+            const pillElement = document.createElement('div');
+            pillElement.className = 'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-primary-600 text-white transition-all duration-300 ease-in-out hover:bg-primary-700';
+            
+            const symbol = getDirectionSymbol(direction);
+            pillElement.innerHTML = `Claude used: <span class="ml-2 bg-primary-700 px-2 py-1 rounded-full">${direction} ${symbol}</span>`;
+            
+            claudeThinking.appendChild(pillElement);
+            claudeThinking.scrollTop = claudeThinking.scrollHeight;
+        }
+
+        function getDirectionSymbol(direction) {
+            switch (direction.toLowerCase()) {
+                case 'up': return '↑';
+                case 'down': return '↓';
+                case 'left': return '←';
+                case 'right': return '→';
+                default: return '';
+            }
+        }
+
+        function showGameOver() {
+            gameOverlay.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
