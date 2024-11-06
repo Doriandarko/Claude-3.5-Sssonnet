@@ -2,12 +2,15 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from anthropic import Anthropic
+from dotenv import load_dotenv
 import random
 import os
 import asyncio
 import json
 import logging
 from collections import deque
+
+load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,7 +26,7 @@ SNAKE_MODEL = "claude-3-5-sonnet-20240620"
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-client = Anthropic(api_key="YOUR API KEY")
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 MAX_HISTORY = 60  # Maximum number of previous states to remember
 
