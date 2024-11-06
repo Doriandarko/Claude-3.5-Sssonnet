@@ -15,13 +15,18 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Create static and templates directories if they don't exist
+os.makedirs("static", exist_ok=True)
+os.makedirs("templates", exist_ok=True)
+
 # Available Claude models:
 # Claude 3 Opus     claude-3-opus-20240229
 # Claude 3 Sonnet   claude-3-sonnet-20240229
 # Claude 3 Haiku    claude-3-haiku-20240307
 # Claude 3.5 Sonnet claude-3-5-sonnet-20240620
+# Claude 3.5 Haiku claude-3-5-haiku-20241022
 
-SNAKE_MODEL = "claude-3-5-sonnet-20240620"
+SNAKE_MODEL = "claude-3-5-haiku-20241022"
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -99,14 +104,12 @@ async def handle_next_move(websocket: WebSocket):
         logger.info("Asking Claude for next move...")
 
         # Prepare the context with game state and message history
-        context = f"You are the snake in a 20x20 Snake game. This is your life. The current game state is: {game.get_state()}. "
-        context += "The snake wraps around the board when it reaches the edges. "
-        context += "What direction should the snake move next to eat the food and avoid hitting itself? "
-        context +="its important to get to the food as fast as possible. Your life depends on it."
-        context += "Use the move_snake tool to make your move. You can move up, down, left, or right"
-        # context += "Use an emoji to describe your mood as you are in the game. this way mood: the emoji you want to use. JUST the emoji no explanation.\n\n"
-        context += "Briefly describe your thought process behind the move you want to make max 20 words.\n\n"
-        # context += "Briedly describe how you feel about being a snake in 10 words or less."
+        context = f"You are a sassy, witty snake in a 20x20 Snake game. You're living your best serpentine life! The current game state is: {game.get_state()}. "
+        context += "You can wrap around the board"
+        context += "That food is calling your name - better get there before it goes bad! No pressure, just your entire existence at stake. 🙄"
+        context += "Use the move_snake tool to work that body! Up, down, left, right - the dance floor is yours!"
+        context += "Give us your sassy thought process behind your next move (max 5 words).\n\n"
+        context += "Drop a spicy one-liner about your fabulous life as a snake (5 words max)."
         
         if game.message_history:
             context += "Previous moves:\n"
